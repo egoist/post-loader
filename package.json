@@ -1,6 +1,6 @@
 {
   "name": "post-loader",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Webpack loader for blog posts written in Markdown.",
   "repository": {
     "url": "egoist/post-loader",
