@@ -1,0 +1,4 @@
+---
+title: foo
+---
+no **options**
