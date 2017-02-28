@@ -5,7 +5,7 @@
 ## Install
 
 ```bash
-yarn add post-loader
+yarn add post-loader --dev
 ```
 
 ## Usage
