@@ -2,11 +2,8 @@ import MarkdownIt from 'markdown-it'
 import fm from 'front-matter'
 import loaderUtils from 'loader-utils'
 
-export default function (content) {
-  this.cacheable && this.cacheable()
-
-  const options = loaderUtils.getOptions(this) || {}
-
+function parse(content, options) {
+  options = options || {}
   const use = options.use
   delete options.use
 
@@ -21,5 +18,17 @@ export default function (content) {
   const { attributes, body } = fm(content)
   const parsed = md.render(body)
 
-  return `module.exports = ${JSON.stringify({ ...attributes, content: parsed })}`
+  return { ...attributes, content: parsed }
 }
+
+function postLoader(content) {
+  this.cacheable && this.cacheable()
+
+  const post = parse(content, loaderUtils.getOptions(this))
+
+  return `module.exports = ${JSON.stringify(post)}`
+}
+
+postLoader.parse = parse
+
+export default postLoader

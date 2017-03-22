@@ -60,6 +60,15 @@ console.log(post.title)
 //=> hello there
 ```
 
+## Use without Webpack
+
+```js
+const postLoader = require('post-loader')
+
+const parsed = postLoader.parse(string, options)
+//=> { title: '...', content: '...' }
+```
+
 ## Contributing
 
 1. Fork it!
