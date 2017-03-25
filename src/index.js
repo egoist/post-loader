@@ -24,7 +24,11 @@ function parse(content, options) {
 function postLoader(content) {
   this.cacheable && this.cacheable()
 
-  const post = parse(content, loaderUtils.getOptions(this))
+  const stat = this.fs.statSync(this.resourcePath)
+
+  const post = Object.assign({
+    date: stat.birthtime
+  }, parse(content, loaderUtils.getOptions(this)))
 
   return `module.exports = ${JSON.stringify(post)}`
 }

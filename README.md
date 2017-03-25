@@ -47,6 +47,7 @@ Yields:
 ```js
 {
   "title": "hello there",
+  "date": "2017-02-28T14:57:59.000Z",
   "content": "<p>post <strong>body</strong></p>\n"
 }
 ```
@@ -59,6 +60,8 @@ import post from './my-blog-post.md'
 console.log(post.title)
 //=> hello there
 ```
+
+*Note:* We automatically set `date` to the birthtime of the file if no `date` is set in front-matter.
 
 ## Use without Webpack
 
