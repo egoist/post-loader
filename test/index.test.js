@@ -42,10 +42,9 @@ test('no options', () => {
         .toBe(true)
 
       const outFile = mfs.readFileSync(join(config.output.path, 'no-options.js'), 'utf8')
-      expect(req(outFile)).toEqual({
-        title: 'foo',
-        content: '<p>no <strong>options</strong></p>\n'
-      })
+      const json = req(outFile)
+      expect(json.title).toBe('foo')
+      expect(json.content).toBe('<p>no <strong>options</strong></p>\n')
     })
 })
 
@@ -75,10 +74,9 @@ test('custom options', () => {
         .toBe(true)
 
       const outFile = mfs.readFileSync(join(config.output.path, 'custom-options.js'), 'utf8')
-      expect(req(outFile)).toEqual({
-        title: 'foo',
-        content: '<p>custom <br/><strong>options</strong></p>\n'
-      })
+      const json = req(outFile)
+      expect(json.title).toBe('foo')
+      expect(json.content).toBe('<p>custom <br/><strong>options</strong></p>\n')
     })
 })
 
