@@ -3,7 +3,7 @@ import fm from 'front-matter'
 import loaderUtils from 'loader-utils'
 
 function parse(content, options) {
-  options = options || {}
+  options = { ...options }
   const use = options.use
   delete options.use
 
@@ -11,7 +11,11 @@ function parse(content, options) {
 
   if (use) {
     for (const plugin of use) {
-      md.use(plugin)
+      if (Array.isArray(plugin)) {
+        md.use(...plugin)
+      } else {
+        md.use(plugin)
+      }
     }
   }
 
