@@ -3,6 +3,7 @@ import webpack from 'webpack'
 import MFS from 'memory-fs'
 import assign from 'deep-assign'
 import marked3 from 'marked3'
+import req from 'require-from-string'
 
 const globalConfig = {
   output: {
@@ -41,7 +42,9 @@ test('no options', () => {
       expect(!stats.hasErrors() && !stats.hasWarnings())
         .toBe(true)
       const outFile = mfs.readFileSync(join(config.output.path, 'no-options.js'), 'utf8')
-      expect(outFile).toMatchSnapshot()
+      const res = req(outFile)
+      delete res.data.date
+      expect(res).toMatchSnapshot()
     })
 })
 
@@ -73,7 +76,9 @@ test('custom options', () => {
         .toBe(true)
 
       const outFile = mfs.readFileSync(join(config.output.path, 'custom-options.js'), 'utf8')
-      expect(outFile).toMatchSnapshot()
+      const res = req(outFile)
+      delete res.data.date
+      expect(res).toMatchSnapshot()
     })
 })
 
