@@ -1,8 +1,8 @@
 import { join } from 'path'
 import webpack from 'webpack'
 import MFS from 'memory-fs'
-import req from 'require-from-string'
 import assign from 'deep-assign'
+import marked3 from 'marked3'
 
 const globalConfig = {
   output: {
@@ -40,11 +40,8 @@ test('no options', () => {
     .then(stats => {
       expect(!stats.hasErrors() && !stats.hasWarnings())
         .toBe(true)
-
       const outFile = mfs.readFileSync(join(config.output.path, 'no-options.js'), 'utf8')
-      const json = req(outFile)
-      expect(json.title).toBe('foo')
-      expect(json.content).toBe('<p>no <strong>options</strong></p>\n')
+      expect(outFile).toMatchSnapshot()
     })
 })
 
@@ -58,7 +55,9 @@ test('custom options', () => {
         test: /\.md$/,
         loader: require.resolve('../src'),
         options: {
-          html: true
+          render(md) {
+            return marked3(md)
+          }
         }
       }]
     }
@@ -74,39 +73,7 @@ test('custom options', () => {
         .toBe(true)
 
       const outFile = mfs.readFileSync(join(config.output.path, 'custom-options.js'), 'utf8')
-      const json = req(outFile)
-      expect(json.title).toBe('foo')
-      expect(json.content).toBe('<p>custom <br/><strong>options</strong></p>\n')
-    })
-})
-
-test('use plugin', () => {
-  const config = assign({
-    entry: {
-      'use-plugin': join(__dirname, 'fixture/use-plugin.md')
-    },
-    module: {
-      rules: [{
-        test: /\.md$/,
-        loader: require.resolve('../src'),
-        options: {
-          use: [require('markdown-it-task-lists')]
-        }
-      }]
-    }
-  }, globalConfig)
-
-  const mfs = new MFS()
-  const compiler = webpack(config)
-  compiler.outputFileSystem = mfs
-
-  return runCompiler(compiler)
-    .then(stats => {
-      expect(!stats.hasErrors() && !stats.hasWarnings())
-        .toBe(true)
-
-      const outFile = mfs.readFileSync(join(config.output.path, 'use-plugin.js'), 'utf8')
-      expect(req(outFile).content.indexOf('task-list') !== -1).toBe(true)
+      expect(outFile).toMatchSnapshot()
     })
 })
 

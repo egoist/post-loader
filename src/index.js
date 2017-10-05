@@ -1,42 +1,24 @@
-import MarkdownIt from 'markdown-it'
-import fm from 'front-matter'
+import matter from 'gray-matter'
 import loaderUtils from 'loader-utils'
 
-function parse(content, options) {
-  options = { ...options }
-  const use = options.use
-  delete options.use
-
-  const md = new MarkdownIt(options)
-
-  if (use) {
-    for (const plugin of use) {
-      if (Array.isArray(plugin)) {
-        md.use(...plugin)
-      } else {
-        md.use(plugin)
-      }
-    }
-  }
-
-  const { attributes, body } = fm(content)
-  const parsed = md.render(body)
-
-  return { ...attributes, content: parsed }
-}
-
-function postLoader(content) {
+function postLoader(source) {
   this.cacheable && this.cacheable()
 
+  const { data, content } = matter(source)
   const stat = this.fs.statSync(this.resourcePath)
 
-  const post = Object.assign({
-    date: stat.birthtime
-  }, parse(content, loaderUtils.getOptions(this)))
+  const options = loaderUtils.getOptions(this) || {}
+
+  const post = {
+    data: {
+      date: stat.birthtime,
+      ...data
+    },
+    content,
+    html: options.render ? options.render(content) : null
+  }
 
   return `module.exports = ${JSON.stringify(post)}`
 }
-
-postLoader.parse = parse
 
 export default postLoader

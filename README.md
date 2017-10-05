@@ -18,14 +18,6 @@ module.exports = {
     rules: [{
       test: /\.md$/,
       loader: 'post-loader'
-      options: {
-        // markdown-it options...
-        html: true,
-        // extra option for adding markdown-it plugins
-        use: [
-          require('markdown-it-task-lists')
-        ]
-      }
     }]
   }
 }
@@ -46,9 +38,12 @@ Yields:
 
 ```js
 {
-  "title": "hello there",
-  "date": "2017-02-28T14:57:59.000Z",
-  "content": "<p>post <strong>body</strong></p>\n"
+  "data": {
+    "title": "hello there",
+    "date": "2017-02-28T14:57:59.000Z"
+  },
+  "content": "post **body**",
+  "html": null
 }
 ```
 
@@ -57,19 +52,43 @@ Which is `require-able` in other files:
 ```js
 import post from './my-blog-post.md'
 
-console.log(post.title)
+console.log(post.data.title)
 //=> hello there
 ```
 
 *Note:* We automatically set `date` to the birthtime of the file if no `date` is set in front-matter.
 
-## Use without Webpack
+## Use a markdown parser
 
 ```js
 const postLoader = require('post-loader')
 
-const parsed = postLoader.parse(string, options)
-//=> { title: '...', content: '...' }
+module.exports = {
+  module: {
+    rules: [{
+      test: /\.md$/,
+      loader: 'post-loader',
+      options: {
+        render(markdown) {
+          return someMarkdownParser.toHTML(markdown)
+        }
+      }
+    }]
+  }
+}
+```
+
+Given the same markdown content as used above, it yields:
+
+```js
+{
+  "data": {
+    "title": "hello there",
+    "date": "2017-02-28T14:57:59.000Z"
+  },
+  "content": "post **body**",
+  "html": "<p>post <strong>options</strong></p>\\\\n\\"
+}
 ```
 
 ## Contributing
